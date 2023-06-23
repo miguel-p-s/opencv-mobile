@@ -45,6 +45,7 @@ jobs:
             ..
         cmake --build . -j 3
         cmake --build . --target install
+        tree
     - name: build-simulator
       run: |
         cd opencv-4.6.0
@@ -56,6 +57,7 @@ jobs:
             ..
         cmake --build . -j 3
         cmake --build . --target install
+        tree
     - name: package
       run: |
         rm -rf opencv2.xcframework
