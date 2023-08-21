@@ -7,7 +7,7 @@ on:
 
 env:
   OPENCV_VERSION: 4.6.0
-  PACKAGENAME: opencv-mobile-${{ env.OPENCV_VERSION }}-android
+  PACKAGENAME: opencv-mobile-${{ OPENCV_VERSION }}-android
 
 jobs:
   setup:
