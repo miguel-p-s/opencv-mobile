@@ -5,9 +5,9 @@ on:
     tags:
       - '*'
 
-# env:
-#   DEVELOPER_DIR: /Applications/Xcode_12.4.app/Contents/Developer
-#   EMSCRIPTEN_VERSION: 2.0.8
+env:
+  OPENCV_VERSION: 3.4.18
+  PACKAGENAME: opencv-mobile-${{ env.OPENCV_VERSION }}-android
 
 jobs:
   setup:
@@ -21,9 +21,6 @@ jobs:
 
   android-opencv3:
     runs-on: ubuntu-20.04
-    env:
-      OPENCV_VERSION: 3.4.18
-      PACKAGENAME: opencv-mobile-3.4.18-android
     steps:
     - uses: actions/checkout@v3
     - name: ndk-fix-debug
@@ -34,7 +31,7 @@ jobs:
         unzip -q opencv-${{ env.OPENCV_VERSION }}.zip
         cd opencv-${{ env.OPENCV_VERSION }}
         echo -n > cmake/OpenCVFindLibsGrfmt.cmake
-        patch -p1 -i ../opencv-3.4.18-no-zlib.patch
+        patch -p1 -i ../opencv-${{ env.OPENCV_VERSION }}-no-zlib.patch
     - name: build-armeabi-v7a
       run: |
         cd opencv-${{ env.OPENCV_VERSION }}
@@ -86,7 +83,7 @@ jobs:
         cp -rf opencv-${{ env.OPENCV_VERSION }}/build-x86_64/install/* ${{ env.PACKAGENAME }}/
         cp -rf opencv-${{ env.OPENCV_VERSION }}/build-armeabi-v7a/install/* ${{ env.PACKAGENAME }}/
         cp -rf opencv-${{ env.OPENCV_VERSION }}/build-arm64-v8a/install/* ${{ env.PACKAGENAME }}/
-        rm -rf rm -rf ${{ env.PACKAGENAME }}/apk ${{ env.PACKAGENAME }}/sdk/etc ${{ env.PACKAGENAME }}/sdk/native/3rdparty
+        rm -rf ${{ env.PACKAGENAME }}/apk ${{ env.PACKAGENAME }}/sdk/etc ${{ env.PACKAGENAME }}/sdk/native/3rdparty
         # rm -f ${{ env.PACKAGENAME }}/sdk/native/jni/*.mk ${{ env.PACKAGENAME }}/sdk/native/jni/android.toolchain.cmake
         zip -q9r ${{ env.PACKAGENAME }}.zip ${{ env.PACKAGENAME }}
     - name: upload
@@ -120,7 +117,7 @@ jobs:
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        PACKAGENAME: opencv-mobile-3.4.18-android
+        PACKAGENAME: opencv-mobile-${{ env.OPENCV_VERSION }}-android
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
         asset_path: artifacts/${{ env.PACKAGENAME }}/${{ env.PACKAGENAME }}.zip
